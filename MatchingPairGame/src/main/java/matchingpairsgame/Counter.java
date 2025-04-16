@@ -1,6 +1,7 @@
 package matchingpairsgame;
 
 import javax.swing.*;
+import java.awt.Font; // <--- ADD THIS LINE
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 

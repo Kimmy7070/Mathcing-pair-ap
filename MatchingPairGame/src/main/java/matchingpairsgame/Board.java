@@ -3,10 +3,10 @@ package matchingpairsgame;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.beans.PropertyVetoException;
 
 public class Board extends JFrame implements ShuffleListener {
     private static final int N = 4;
@@ -19,53 +19,77 @@ public class Board extends JFrame implements ShuffleListener {
     public Board() {
         setTitle("Matching Pairs Game");
         setSize(600, 400);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        JPanel cardPanel = new JPanel(new GridLayout(2 * N / 4, 4));
+        // Card panel with 2 rows and 4 columns
+        JPanel cardPanel = new JPanel(new GridLayout(2, 4));
         for (int i = 0; i < cards.length; i++) {
             cards[i] = new Card();
-            cardPanel.add(cards[i]);
+            cardPanel.add(cards[i].getButton()); // Use getButton() to add to UI
         }
 
+        // Button panel (Shuffle + Exit)
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(shuffleButton);
         buttonPanel.add(exitButton);
 
+        // Label panel (Controller + Counter)
         JPanel labelPanel = new JPanel(new GridLayout(2, 1));
         labelPanel.add(controller);
         labelPanel.add(counter);
 
+        // Add panels to the frame
         add(cardPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
         add(labelPanel, BorderLayout.NORTH);
 
+        // Shuffle button action
         shuffleButton.addActionListener(e -> shuffleCards());
+
+        // Exit button action
         exitButton.addActionListener(e -> {
-            int option = JOptionPane.showConfirmDialog(this, "Exit game?", "Confirm", JOptionPane.YES_NO_OPTION);
+            int option = JOptionPane.showConfirmDialog(this, 
+                "Exit game?", "Confirm", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) System.exit(0);
         });
 
+        // Add listeners to cards
         for (Card card : cards) {
-            card.addPropertyChangeListener("state", evt -> {
-                if (card.getState() == Card.State.FACE_UP) {
-                    controller.cardFlipped(card);
+            // Listen for state changes
+            card.addPropertyChangeListener("state", new java.beans.PropertyChangeListener() {
+                @Override
+                public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                    if (card.getState() == Card.State.FACE_UP) {
+                        controller.cardFlipped(card);
+                    }
                 }
             });
-            card.addVetoableChangeListener(controller);
+            card.addVetoableChangeListener(controller); // For vetoable state changes
         }
 
+        // Connect controller and counter
         controller.addPropertyChangeListener(counter);
+
+        // Initial shuffle
         shuffleCards();
+
+        // Finalize window setup
+        pack();
+        setLocationRelativeTo(null); // Center the window
+        setVisible(true);
     }
 
     private void shuffleCards() {
+        // Generate 4 pairs of numbers
         List<Integer> values = new ArrayList<>();
         for (int i = 1; i <= N; i++) {
             values.add(i);
             values.add(i);
         }
-        Collections.shuffle(values);
+        Collections.shuffle(values); // Randomize order
+
+        // Trigger shuffle event
         fireShuffleEvent(values.stream().mapToInt(i -> i).toArray());
         controller.reset();
         counter.reset();
@@ -77,21 +101,20 @@ public class Board extends JFrame implements ShuffleListener {
         for (int i = 0; i < cards.length; i++) {
             cards[i].setValue(values[i]);
             try {
-                cards[i].setState(Card.State.FACE_DOWN);
+                cards[i].setState(Card.State.FACE_DOWN); // Reset to face-down
             } catch (PropertyVetoException ex) {
-                // Should not happen as initial state is allowed
+                // This should never happen on initial shuffle
             }
         }
     }
 
     private void fireShuffleEvent(int[] values) {
         ShuffleEvent event = new ShuffleEvent(this, values);
-        for (Card card : cards) {
-            card.shuffled(event);
-        }
+        this.shuffled(event); // Directly handle the event
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Board().setVisible(true));
+        // Start the GUI on the Event Dispatch Thread
+        SwingUtilities.invokeLater(() -> new Board());
     }
 }

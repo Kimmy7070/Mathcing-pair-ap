@@ -1,6 +1,7 @@
 package matchingpairsgame;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -8,6 +9,7 @@ import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.util.Timer;
 import java.util.TimerTask;
+import matchingpairsgame.Card.State;
 
 public class Controller extends JLabel implements VetoableChangeListener, MatchedListener {
     private int matchedPairs;
@@ -34,8 +36,14 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
     @Override
     public void matched(MatchedEvent e) {
         if (e.isMatched()) {
-            firstCard.setState(Card.State.EXCLUDED);
-            secondCard.setState(Card.State.EXCLUDED);
+            try {
+                firstCard.setState(Card.State.EXCLUDED);
+            }
+            catch (PropertyVetoException ex) {}
+            try {
+                secondCard.setState(Card.State.EXCLUDED);
+            }
+            catch (PropertyVetoException ex) {}
             matchedPairs++;
             setText("Pairs: " + matchedPairs);
         } else {

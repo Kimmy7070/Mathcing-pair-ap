@@ -2,24 +2,25 @@ package matchingpairsgame;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.VetoableChangeListener;
 import java.beans.VetoableChangeSupport;
+import java.beans.PropertyVetoException;
 
-public class Card extends JButton implements java.io.Serializable {
+public class Card implements java.io.Serializable {
     public enum State { EXCLUDED, FACE_DOWN, FACE_UP }
 
+    private final JButton button = new JButton(); // Composition instead of inheritance
     private int value;
     private State state;
-    private final transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private final transient VetoableChangeSupport vcs = new VetoableChangeSupport(this);
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private final VetoableChangeSupport vcs = new VetoableChangeSupport(this);
 
     public Card() {
         state = State.FACE_DOWN;
-        setFont(new Font("Arial", Font.BOLD, 24));
-        addActionListener(e -> {
+        button.setFont(new Font("Arial", Font.BOLD, 24));
+        button.addActionListener(e -> {
             try {
                 if (state == State.FACE_DOWN) {
                     setState(State.FACE_UP);
@@ -30,17 +31,20 @@ public class Card extends JButton implements java.io.Serializable {
                 // Vetoed, do nothing
             }
         });
+        updateAppearance();
     }
 
-    public synchronized int getValue() { return value; }
-    public synchronized void setValue(int newValue) {
+    public JButton getButton() { return button; } // Expose the button
+
+    public int getValue() { return value; }
+    public void setValue(int newValue) {
         int old = value;
         value = newValue;
         pcs.firePropertyChange("value", old, newValue);
     }
 
-    public synchronized State getState() { return state; }
-    public synchronized void setState(State newState) throws PropertyVetoException {
+    public State getState() { return state; }
+    public void setState(State newState) throws PropertyVetoException {
         State old = state;
         vcs.fireVetoableChange("state", old, newState);
         state = newState;
@@ -50,14 +54,15 @@ public class Card extends JButton implements java.io.Serializable {
 
     private void updateAppearance() {
         switch (state) {
-            case EXCLUDED: setBackground(Color.RED); setText(""); break;
-            case FACE_DOWN: setBackground(Color.GREEN); setText(""); break;
-            case FACE_UP: setText(String.valueOf(value)); break;
+            case EXCLUDED: button.setBackground(Color.RED); button.setText(""); break;
+            case FACE_DOWN: button.setBackground(Color.GREEN); button.setText(""); break;
+            case FACE_UP: button.setText(String.valueOf(value)); break;
         }
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) 
+    {
+        pcs.addPropertyChangeListener(propertyName, listener);
     }
 
     public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -70,15 +75,5 @@ public class Card extends JButton implements java.io.Serializable {
 
     public void removeVetoableChangeListener(VetoableChangeListener listener) {
         vcs.removeVetoableChangeListener(listener);
-    }
-
-    public void shuffled(ShuffleEvent e) {
-        int[] values = e.getValues();
-        for (int i = 0; i < values.length; i++) {
-            if (this == cards[i]) {
-                setValue(values[i]);
-                break;
-            }
-        }
     }
 }
