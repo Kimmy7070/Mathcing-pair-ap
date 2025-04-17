@@ -10,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Controller extends JLabel implements VetoableChangeListener, MatchedListener {
+    private boolean isShuffling = false;
     private int matchedPairs;
     private Card firstCard;
     private Card secondCard;
@@ -21,9 +22,22 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
         setFont(new Font("Arial", Font.BOLD, 18));
         this.cards = cards;
     }
-
+    
+    public void reset()//reset function
+    {
+        isShuffling = true;
+        matchedPairs = 0;
+        setText("Pairs: 0");
+        firstCard = null;
+        secondCard = null;
+        isShuffling = false;
+    }
+    
     @Override
     public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
+        
+        if (isShuffling) return; //so veto doesnot work while shuffle
+        
         if ("state".equals(evt.getPropertyName())) {
             Card card = (Card) evt.getSource();
             Card.State newState = (Card.State) evt.getNewValue();
@@ -95,12 +109,5 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
                 ((MatchedListener) card).matched(e);
             }
         }
-    }
-
-    public void reset() {
-        matchedPairs = 0;
-        setText("Pairs: 0");
-        firstCard = null;
-        secondCard = null;
     }
 }
