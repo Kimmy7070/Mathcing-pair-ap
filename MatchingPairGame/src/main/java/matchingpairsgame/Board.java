@@ -90,7 +90,7 @@ public class Board extends JFrame implements ShuffleListener {
     fireShuffleEvent(values.stream().mapToInt(i -> i).toArray());
     controller.reset();
     counter.reset();
-    }
+}
 
     @Override
     public void shuffled(ShuffleEvent e) {

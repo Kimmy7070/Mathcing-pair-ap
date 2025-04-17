@@ -10,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Controller extends JLabel implements VetoableChangeListener, MatchedListener {
+    private boolean isShuffling = false;
     private int matchedPairs;
     private Card firstCard;
     private Card secondCard;
@@ -22,8 +23,39 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
         this.cards = cards;
     }
 
+    public void reset()//reset function
+    {
+        isShuffling = true;
+        matchedPairs = 0;
+        setText("Pairs: 0");
+        if(firstCard != null && secondCard != null)
+        {
+            try 
+            {
+                firstCard.setState(Card.State.FACE_DOWN); // Flip back
+                secondCard.setState(Card.State.FACE_DOWN);
+            } catch (PropertyVetoException ex) {
+            // Ignore
+        }
+        }
+        else if(firstCard != null && secondCard == null)
+        {
+            try 
+            {
+                firstCard.setState(Card.State.FACE_DOWN);
+            }
+            catch (PropertyVetoException ex) {
+            // Ignore
+            }
+        }
+        isShuffling = false;
+    }
+    
     @Override
     public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
+        
+        if (isShuffling) return; //so veto doesnot work while shuffle
+        
         if ("state".equals(evt.getPropertyName())) {
             Card card = (Card) evt.getSource();
             Card.State newState = (Card.State) evt.getNewValue();
@@ -45,7 +77,7 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
         }
         matchedPairs++;
         setText("Pairs: " + matchedPairs);
-    } else {
+    } else if(firstCard != null && secondCard != null) {
         try {
             firstCard.setState(Card.State.FACE_DOWN); // Flip back
             secondCard.setState(Card.State.FACE_DOWN);
@@ -95,12 +127,5 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
                 ((MatchedListener) card).matched(e);
             }
         }
-    }
-
-    public void reset() {
-        matchedPairs = 0;
-        setText("Pairs: 0");
-        firstCard = null;
-        secondCard = null;
     }
 }
