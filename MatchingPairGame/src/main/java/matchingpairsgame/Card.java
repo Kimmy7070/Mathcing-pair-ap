@@ -20,6 +20,7 @@ public class Card implements java.io.Serializable {
     public Card() {
         state = State.FACE_DOWN;
         button.setFont(new Font("Arial", Font.BOLD, 24));
+        button.setPreferredSize(new Dimension(100, 100));
         button.addActionListener(e -> {
             try {
                 if (state == State.FACE_DOWN) {

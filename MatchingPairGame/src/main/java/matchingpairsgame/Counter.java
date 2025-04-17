@@ -1,7 +1,7 @@
 package matchingpairsgame;
 
 import javax.swing.*;
-import java.awt.Font; // <--- ADD THIS LINE
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -16,6 +16,12 @@ public class Counter extends JLabel implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if ("state".equals(evt.getPropertyName()) && evt.getNewValue() == Card.State.FACE_UP) {
+            count++;
+            setText("Moves: " + count);
+        }
+        // In Counter.java's propertyChange():
+        if (evt.getNewValue() == Card.State.FACE_UP && evt.getOldValue() != Card.State.FACE_UP) 
+        {
             count++;
             setText("Moves: " + count);
         }

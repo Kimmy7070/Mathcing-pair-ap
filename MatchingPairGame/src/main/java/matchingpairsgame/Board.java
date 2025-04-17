@@ -11,19 +11,19 @@ import java.beans.PropertyVetoException;
 public class Board extends JFrame implements ShuffleListener {
     private static final int N = 4;
     private final Card[] cards = new Card[2 * N];
-    private final Controller controller = new Controller();
+    private final Controller controller = new Controller(cards);
     private final Counter counter = new Counter();
     private final JButton shuffleButton = new JButton("Shuffle");
     private final JButton exitButton = new JButton("Exit");
 
     public Board() {
         setTitle("Matching Pairs Game");
-        setSize(600, 400);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // Card panel with 2 rows and 4 columns
-        JPanel cardPanel = new JPanel(new GridLayout(2, 4));
+        JPanel cardPanel = new JPanel(new GridLayout(2, 4, 10, 10));
         for (int i = 0; i < cards.length; i++) {
             cards[i] = new Card();
             cardPanel.add(cards[i].getButton()); // Use getButton() to add to UI
@@ -81,31 +81,29 @@ public class Board extends JFrame implements ShuffleListener {
     }
 
     private void shuffleCards() {
-        // Generate 4 pairs of numbers
-        List<Integer> values = new ArrayList<>();
-        for (int i = 1; i <= N; i++) {
-            values.add(i);
-            values.add(i);
-        }
-        Collections.shuffle(values); // Randomize order
-
-        // Trigger shuffle event
-        fireShuffleEvent(values.stream().mapToInt(i -> i).toArray());
-        controller.reset();
-        counter.reset();
+    List<Integer> values = new ArrayList<>();
+    for (int i = 1; i <= N; i++) {
+        values.add(i);
+        values.add(i);
+    }
+    Collections.shuffle(values);
+    fireShuffleEvent(values.stream().mapToInt(i -> i).toArray());
+    controller.reset();
+    counter.reset();
     }
 
     @Override
     public void shuffled(ShuffleEvent e) {
-        int[] values = e.getValues();
-        for (int i = 0; i < cards.length; i++) {
-            cards[i].setValue(values[i]);
-            try {
-                cards[i].setState(Card.State.FACE_DOWN); // Reset to face-down
-            } catch (PropertyVetoException ex) {
-                // This should never happen on initial shuffle
-            }
+    int[] values = e.getValues();
+    for (int i = 0; i < cards.length; i++) {
+        cards[i].setValue(values[i]);
+        try {
+            cards[i].setState(Card.State.FACE_DOWN); // Force reset
+            cards[i].getButton().setEnabled(true);
+        } catch (PropertyVetoException ex) {
+            // Should not happen
         }
+    }
     }
 
     private void fireShuffleEvent(int[] values) {
