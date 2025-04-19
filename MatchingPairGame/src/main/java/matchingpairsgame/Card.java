@@ -60,7 +60,18 @@ public class Card implements java.io.Serializable {
             case FACE_UP: button.setText(String.valueOf(value)); break;
         }
     }
-
+    
+    //@Override
+    public void matched(MatchedEvent e) {
+      if (state == State.FACE_UP) {
+           try {
+               // Flip down or exclude based on match result
+               setState(e.isMatched() ? State.EXCLUDED : State.FACE_DOWN);
+           } catch (PropertyVetoException ex) {
+               // Vetoed change, ignore
+           }
+       }
+    }
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) 
     {
         pcs.addPropertyChangeListener(propertyName, listener);

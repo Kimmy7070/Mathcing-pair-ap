@@ -69,7 +69,7 @@ public class Board extends JFrame implements ShuffleListener {
         }
 
         // Connect controller and counter
-        controller.addPropertyChangeListener(counter);
+        controller.addPropertyChangeListener("state", counter);
 
         // Initial shuffle
         shuffleCards();

@@ -20,11 +20,11 @@ public class Counter extends JLabel implements PropertyChangeListener {
             setText("Moves: " + count);
         }
         // In Counter.java's propertyChange():
-        if (evt.getNewValue() == Card.State.FACE_UP && evt.getOldValue() != Card.State.FACE_UP) 
-        {
-            count++;
-            setText("Moves: " + count);
-        }
+//        if (evt.getNewValue() == Card.State.FACE_UP && evt.getOldValue() != Card.State.FACE_UP) 
+//        {
+//            count++;
+//            setText("Moves: " + count);
+//        }
     }
 
     public void reset() {

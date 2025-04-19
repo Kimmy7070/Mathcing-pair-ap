@@ -22,7 +22,6 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
         setFont(new Font("Arial", Font.BOLD, 18));
         this.cards = cards;
     }
-
     public void reset()//reset function
     {
         isShuffling = true;
@@ -48,6 +47,9 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
             // Ignore
             }
         }
+        firstCard = null;
+        secondCard = null;
+
         isShuffling = false;
     }
     
@@ -122,6 +124,7 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
     }
 
     private void fireMatchedEvent(MatchedEvent e) {
+        matched(e);
         for (Card card : cards) {
             if (card instanceof MatchedListener) {
                 ((MatchedListener) card).matched(e);
