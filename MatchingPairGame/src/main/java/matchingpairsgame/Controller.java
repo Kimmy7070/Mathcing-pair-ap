@@ -54,19 +54,21 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
     }
     
     @Override
-    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
-        
-        if (isShuffling) return; //so veto doesnot work while shuffle
-        
-        if ("state".equals(evt.getPropertyName())) {
-            Card card = (Card) evt.getSource();
-            Card.State newState = (Card.State) evt.getNewValue();
-            if (newState == Card.State.FACE_DOWN &&
-                (card.getState() == Card.State.EXCLUDED || card.getState() == Card.State.FACE_UP)) {
-                throw new PropertyVetoException("Cannot flip excluded/face-up card", evt);
-            }
+    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException
+    {
+        if (!(evt.getNewValue() instanceof Card.State) || !(evt.getSource() instanceof Card)) {
+            return;
+        }
+
+        Card card = (Card) evt.getSource();
+        Card.State newState = (Card.State) evt.getNewValue();
+
+        // Only block attempts to flip an EXCLUDED card back down
+        if (newState == Card.State.FACE_DOWN && card.getState() == Card.State.EXCLUDED) {
+            throw new PropertyVetoException("Cannot flip an excluded card", evt);
         }
     }
+
 
     @Override
     public void matched(MatchedEvent e) {
@@ -130,5 +132,13 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
                 ((MatchedListener) card).matched(e);
             }
         }
+    }
+    
+    public void startShuffling() {
+        isShuffling = true;
+    }
+
+    public void endShuffling() {
+        isShuffling = false;
     }
 }
