@@ -3,14 +3,12 @@ package matchingpairsgame;
 import javax.swing.*;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Controller extends JLabel implements VetoableChangeListener, MatchedListener {
-    private boolean isShuffling = false;
     private int matchedPairs;
     private Card firstCard;
     private Card secondCard;
@@ -24,7 +22,6 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
     }
     public void reset()//reset function
     {
-        isShuffling = true;
         matchedPairs = 0;
         setText("Pairs: 0");
         if(firstCard != null && secondCard != null)
@@ -49,8 +46,6 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
         }
         firstCard = null;
         secondCard = null;
-
-        isShuffling = false;
     }
     
     @Override
@@ -60,7 +55,6 @@ public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException
         return;
     }
 
-    Card card     = (Card) evt.getSource();
     Card.State oldState = (Card.State) evt.getOldValue();
     Card.State newState = (Card.State) evt.getNewValue();
 
