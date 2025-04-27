@@ -99,6 +99,11 @@ public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException
         firstCard.addVetoableChangeListener(this);
         secondCard.addVetoableChangeListener(this);
     }
+    if (matchedPairs == cards.length/2)
+    {
+        setText("VICTORY!");
+        return;
+    }
     firstCard = null;
     secondCard = null;
     }

@@ -17,14 +17,8 @@ public class Counter extends JLabel implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         if ("state".equals(evt.getPropertyName()) && evt.getNewValue() == Card.State.FACE_UP) {
             count++;
-            setText("Moves: " + count);
+            setText("Moves: " + (int)Math.ceil(count/2));// works after 2 cards are flipped and counter as a move
         }
-        // In Counter.java's propertyChange():
-//        if (evt.getNewValue() == Card.State.FACE_UP && evt.getOldValue() != Card.State.FACE_UP) 
-//        {
-//            count++;
-//            setText("Moves: " + count);
-//        }
     }
     
     public void shufflePerformed(ShuffleEvent e) {
