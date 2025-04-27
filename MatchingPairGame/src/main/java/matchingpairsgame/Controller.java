@@ -54,22 +54,28 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
     }
     
     @Override
-    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException
-    {
-        if (!(evt.getNewValue() instanceof Card.State) || !(evt.getSource() instanceof Card)) {
-            return;
-        }
-
-        Card card = (Card) evt.getSource();
-        Card.State newState = (Card.State) evt.getNewValue();
-
-        // Only block attempts to flip an EXCLUDED card back down
-        if ((newState == Card.State.FACE_DOWN && card.getState() == Card.State.EXCLUDED)) {
-            throw new PropertyVetoException("Cannot flip an excluded card", evt);
-        }
+public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
+    // only care about State changes on Card
+    if (!(evt.getNewValue() instanceof Card.State) || !(evt.getSource() instanceof Card)) {
+        return;
     }
 
+    Card card     = (Card) evt.getSource();
+    Card.State oldState = (Card.State) evt.getOldValue();
+    Card.State newState = (Card.State) evt.getNewValue();
 
+    if (oldState == Card.State.EXCLUDED && newState == Card.State.FACE_DOWN) {
+        throw new PropertyVetoException("Cannot flip an excluded card",evt);
+    }
+
+    if (oldState == Card.State.FACE_UP && newState == Card.State.FACE_DOWN) {
+        throw new PropertyVetoException(
+            "Cannot flip a card from face-up back to face-down directly",
+            evt
+        );
+    }
+}
+    
     @Override
     public void matched(MatchedEvent e) {
     if (e.isMatched()) {
@@ -82,12 +88,16 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
         matchedPairs++;
         setText("Pairs: " + matchedPairs);
     } else if(firstCard != null && secondCard != null) {
+        firstCard.removeVetoableChangeListener(this);
+        secondCard.removeVetoableChangeListener(this);
         try {
             firstCard.setState(Card.State.FACE_DOWN); // Flip back
             secondCard.setState(Card.State.FACE_DOWN);
         } catch (PropertyVetoException ex) {
             // Ignore
         }
+        firstCard.addVetoableChangeListener(this);
+        secondCard.addVetoableChangeListener(this);
     }
     firstCard = null;
     secondCard = null;
