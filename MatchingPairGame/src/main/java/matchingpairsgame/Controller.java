@@ -64,7 +64,7 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
         Card.State newState = (Card.State) evt.getNewValue();
 
         // Only block attempts to flip an EXCLUDED card back down
-        if (newState == Card.State.FACE_DOWN && card.getState() == Card.State.EXCLUDED) {
+        if ((newState == Card.State.FACE_DOWN && card.getState() == Card.State.EXCLUDED)) {
             throw new PropertyVetoException("Cannot flip an excluded card", evt);
         }
     }
@@ -132,13 +132,5 @@ public class Controller extends JLabel implements VetoableChangeListener, Matche
                 ((MatchedListener) card).matched(e);
             }
         }
-    }
-    
-    public void startShuffling() {
-        isShuffling = true;
-    }
-
-    public void endShuffling() {
-        isShuffling = false;
     }
 }

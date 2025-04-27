@@ -26,6 +26,10 @@ public class Counter extends JLabel implements PropertyChangeListener {
 //            setText("Moves: " + count);
 //        }
     }
+    
+    public void shufflePerformed(ShuffleEvent e) {
+    reset(); // Reset counter to 0
+}
 
     public void reset() {
         count = 0;

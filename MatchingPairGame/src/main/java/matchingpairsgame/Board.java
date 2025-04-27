@@ -81,6 +81,11 @@ public class Board extends JFrame implements ShuffleListener {
     }
 
     private void shuffleCards() {
+    
+    for (Card c : cards) {
+        c.removeVetoableChangeListener(controller);//removed while shuffleing
+    }
+    
     List<Integer> values = new ArrayList<>();
     for (int i = 1; i <= N; i++) {
         values.add(i);
@@ -90,6 +95,10 @@ public class Board extends JFrame implements ShuffleListener {
     fireShuffleEvent(values.stream().mapToInt(i -> i).toArray());
     controller.reset();
     counter.reset();
+    
+    for (Card c : cards) {
+        c.addVetoableChangeListener(controller);
+    }
 }
 
     @Override
