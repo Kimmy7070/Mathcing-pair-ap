@@ -65,12 +65,11 @@ public class Board extends JFrame implements ShuffleListener {
                     }
                 }
             });
+            card.addPropertyChangeListener("state", counter);
             card.addVetoableChangeListener(controller); // For vetoable state changes
         }
 
-        // Connect controller and counter
-        controller.addPropertyChangeListener("state", counter);
-
+        
         // Initial shuffle
         shuffleCards();
 
@@ -83,7 +82,7 @@ public class Board extends JFrame implements ShuffleListener {
     private void shuffleCards() {
     
     for (Card c : cards) {
-        c.removeVetoableChangeListener(controller);//removed while shuffleing
+        c.removeVetoableChangeListener(controller);//removed while shuffle
     }
     
     List<Integer> values = new ArrayList<>();
@@ -97,7 +96,7 @@ public class Board extends JFrame implements ShuffleListener {
     counter.reset();
     
     for (Card c : cards) {
-        c.addVetoableChangeListener(controller);
+        c.addVetoableChangeListener(controller);//added after shuffle
     }
 }
 
