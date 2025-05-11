@@ -1,12 +1,15 @@
 package matchingpairsgame;
 
-import javax.swing.*;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 public class Controller extends JLabel implements VetoableChangeListener, MatchedListener {
     private int matchedPairs;

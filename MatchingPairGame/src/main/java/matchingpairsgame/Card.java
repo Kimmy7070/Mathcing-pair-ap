@@ -1,12 +1,15 @@
 package matchingpairsgame;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.beans.VetoableChangeSupport;
-import java.beans.PropertyVetoException;
+
+import javax.swing.JButton;
 
 public class Card implements java.io.Serializable {
     public enum State { EXCLUDED, FACE_DOWN, FACE_UP }

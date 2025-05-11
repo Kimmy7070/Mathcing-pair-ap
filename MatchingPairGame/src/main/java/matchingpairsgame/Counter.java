@@ -1,9 +1,11 @@
 package matchingpairsgame;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 public class Counter extends JLabel implements PropertyChangeListener {
     private int count;
